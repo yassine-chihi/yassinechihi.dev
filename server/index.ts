@@ -39,11 +39,9 @@ app.post('/api/contact', (req, res) => {
         .then(() => {
             transporter
                 .sendMail({
-                    from: `"${name}" <yassine.chihi20@gmail.com>`, // sender address
-                    to: 'yassine.chihi20@gmail.com, yassine.chihi20@gmail.com', // list of receivers
-                    subject: `${name} <${email}> ${
-                        company ? `from ${company}` : ''
-                    } submitted a contact form`, // Subject line
+                    from: `"${email}"`, // sender address
+                    to: 'yassine.chihi20@gmail.com', // list of receivers
+                    subject: `${name} : <${company}> submitted a contact email`, // Subject line
                     text: `${message}`, // plain text body
                 })
                 .then((info) => {
