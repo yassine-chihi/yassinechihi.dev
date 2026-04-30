@@ -186,7 +186,7 @@ export default class MonitorScreen extends EventEmitter {
         // Inner Site goes HERE !!!
         iframe.src = 'https://yassinechihi-inner-portfolio.vercel.app/';
         /**
-         * Use dev server is query params are present
+         * Use dev server if query params are present
          *
          * Warning: This will not work unless the dev server is running on localhost:3000
          * Also running the dev server causes browsers to freak out over unsecure connections
