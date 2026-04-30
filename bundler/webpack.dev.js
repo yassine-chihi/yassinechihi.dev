@@ -20,7 +20,7 @@ module.exports = merge(
         },
         devServer:
         {
-            host: 'local-ip',
+            host: '0.0.0.0',
             port: portFinderSync.getPort(8080),
             open: true,
             https: false,
@@ -38,7 +38,7 @@ module.exports = merge(
                 overlay: true,
                 progress: false
             },
-            onAfterSetupMiddleware: function(devServer)
+            setupMiddlewares: function(middlewares, devServer)
             {
                 const port = devServer.options.port
                 const https = devServer.options.https ? 's' : ''
@@ -47,6 +47,7 @@ module.exports = merge(
                 const domain2 = `http${https}://localhost:${port}`
                 
                 console.log(`Project running at:\n  - ${infoColor(domain1)}\n  - ${infoColor(domain2)}`)
+                return middlewares
             }
         }
     }
