@@ -3,6 +3,8 @@ const { merge } = require('webpack-merge')
 const commonConfiguration = require('./webpack.common.js')
 const ip = require('ip')
 const portFinderSync = require('portfinder-sync')
+const nodemailer = require('nodemailer')
+require('dotenv').config()
 
 const infoColor = (_message) =>
 {
@@ -47,6 +49,62 @@ module.exports = merge(
                 const domain2 = `http${https}://localhost:${port}`
                 
                 console.log(`Project running at:\n  - ${infoColor(domain1)}\n  - ${infoColor(domain2)}`)
+
+                const bodyParser = require('body-parser')
+                devServer.app.use('/api/contact', bodyParser.json())
+
+                devServer.app.options('/api/contact', (req, res) =>
+                {
+                    res.header('Access-Control-Allow-Origin', '*')
+                    res.header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+                    res.header('Access-Control-Allow-Headers', 'Content-Type')
+                    res.sendStatus(200)
+                })
+
+                devServer.app.post('/api/contact', (req, res) =>
+                {
+                    res.header('Access-Control-Allow-Origin', '*')
+
+                    const { name, company, email, message } = req.body
+
+                    const transporter = nodemailer.createTransport({
+                        host: 'smtp.gmail.com',
+                        port: 587,
+                        auth: {
+                            user: process.env.FOLIO_EMAIL,
+                            pass: process.env.FOLIO_PASSWORD,
+                        },
+                    })
+
+                    transporter
+                        .verify()
+                        .then(() =>
+                        {
+                            transporter
+                                .sendMail({
+                                    from: `"${email}"`,
+                                    to: 'yassine.chihi20@gmail.com',
+                                    subject: `${name} : <${company}> submitted a contact email`,
+                                    text: `${message}`,
+                                })
+                                .then((info) =>
+                                {
+                                    console.log({ info })
+                                    res.json({ message: 'success' })
+                                })
+                                .catch((e) =>
+                                {
+                                    console.error(e)
+                                    res.status(500).send(e)
+                                })
+                        })
+                        .catch((e) =>
+                        {
+                            console.error(e)
+                            res.status(500).send(e)
+                        })
+                })
+
                 return middlewares
             }
         }
